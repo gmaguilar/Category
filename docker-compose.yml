@@ -1,0 +1,30 @@
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: category-db-mysql
+    command: --lower-case-table-names=2
+    restart: unless-stopped
+
+    ports:
+      - "3306:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: MySQL12345
+      MYSQL_DATABASE: category
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: MySQL12345
+
+    volumes:
+      - "/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/MySQL:/var/lib/mysql"
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+volumes:
+  mysql_data:
+    name: mysql_data
