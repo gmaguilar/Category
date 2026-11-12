@@ -1,0 +1,549 @@
+openapi: 3.0.3
+info:
+  description: "API for managing Categorys, including creating, updating, deleting\
+    \ Categorys. The API allows the user to categorize the bills by a category. Create\
+    \ new category, delete it or modify. The systems saves ids but when the user interacts\
+    \ with the API, they work with the actual data rather than the IDs."
+  title: Category API
+  version: 1.0.0
+servers:
+- description: Local development server for API testing and development.
+  url: http://localhost:8085
+- description: "Production server until a custom domain is available; currently, localhost\
+    \ until Practice 3"
+  url: https://localhost:8086
+tags:
+- description: Operations related to managing categories.
+  name: Category
+paths:
+  /category:
+    get:
+      description: Retrieve a list of all categories available to the authenticated
+        user.
+      operationId: getAllCategories
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Category"
+                type: array
+          description: A list of categories.
+        "401":
+          content:
+            application/json:
+              example:
+                message: Unauthorized.
+                code: 401
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unauthorized. The user is not authenticated.
+        "403":
+          content:
+            application/json:
+              example:
+                message: Forbidden.
+                code: 403
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Forbidden. The user is authenticated but does not have permission
+            to access the requested resource.
+        "500":
+          content:
+            application/json:
+              example:
+                message: Internal server error.
+                code: 500
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Internal server error. An unexpected error occurred on the
+            server.
+      summary: Retrieve all categories
+      tags:
+      - Category
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Category
+    post:
+      description: Create a new category with the provided details. The request body
+        must contain  the necessary information to create the category. Each category
+        must have a unique name for each user. The user must be authenticated to access
+        this endpoint. Only authenticated users can create categories.
+      operationId: createCategory
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: Groceries
+            schema:
+              $ref: "#/components/schemas/CategoryRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                categoryId: 123e4567-e89b-12d3-a456-426614174000
+                name: Groceries
+                createdAt: 2026-10-24T00:00:00Z
+                userId: 123e4567-e89b-12d3-a456-426614174000
+              schema:
+                $ref: "#/components/schemas/Category"
+          description: Successful operation. Category created
+        "400":
+          content:
+            application/json:
+              example:
+                message: Invalid category data. Please check the provided information.
+                code: 400
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unable to create category. The provided category data is invalid
+            or incomplete.
+        "401":
+          content:
+            application/json:
+              example:
+                message: Unauthorized.
+                code: 401
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unauthorized. The user is not authenticated.
+        "403":
+          content:
+            application/json:
+              example:
+                message: Forbidden.
+                code: 403
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Forbidden. The user is authenticated but does not have permission
+            to access the requested resource.
+        "500":
+          description: Internal server error. An unexpected error occurred on the
+            server.
+      summary: Create a category.
+      tags:
+      - Category
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Category
+  /category/{categoryId}:
+    delete:
+      description: "Delete a category by ID. Only an authenticated user with the necessary\
+        \ permissions can perform this action. An user cannot delete a category they\
+        \ do not own. The category will change isActive to false instead of being\
+        \ permanently deleted. If the category has associated bills, it cannot be\
+        \ deleted."
+      parameters:
+      - description: The unique identifier of the category.
+        explode: false
+        in: path
+        name: categoryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: The ID of the category to delete.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+          description: The category was successfully deleted.
+        "401":
+          content:
+            application/json:
+              example:
+                message: Unauthorized.
+                code: 401
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unauthorized. The user is not authenticated.
+        "403":
+          content:
+            application/json:
+              example:
+                message: Forbidden.
+                code: 403
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Forbidden. The user is authenticated but does not have permission
+            to delete the requested resource.
+        "404":
+          content:
+            application/json:
+              example:
+                message: Category not found.
+                code: 404
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Not Found. The category with the specified ID does not exist.
+        "500":
+          content:
+            application/json:
+              example:
+                message: Internal server error.
+                code: 500
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Internal server error. An unexpected error occurred on the
+            server.
+      summary: Delete a category by ID.
+      tags:
+      - Category
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Category
+    get:
+      description: Retrieve a single category by its unique identifier. The user must
+        be authenticated to access this endpoint. The endpoint will return an error
+        if the category does not exist. The category must belong to the authenticated
+        user.
+      operationId: getCategoryById
+      parameters:
+      - description: The unique identifier of the category.
+        explode: false
+        in: path
+        name: categoryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+          description: The requested category.
+        "401":
+          content:
+            application/json:
+              example:
+                message: Unauthorized.
+                code: 401
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unauthorized. The user is not authenticated.
+        "403":
+          content:
+            application/json:
+              example:
+                message: Forbidden.
+                code: 403
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Forbidden. The user is authenticated but does not have permission
+            to access the requested resource.
+        "404":
+          content:
+            application/json:
+              example:
+                message: Category not found.
+                code: 404
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Not Found. The category with the specified ID does not exist.
+        "500":
+          content:
+            application/json:
+              example:
+                message: Internal server error.
+                code: 500
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Internal server error. An unexpected error occurred on the
+            server.
+      summary: Retrieve a category by ID
+      tags:
+      - Category
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Category
+    put:
+      description: Update the details of a category by its unique identifier. The
+        user must be authenticated and must own the category to perform this action.
+        The endpoint will return an error if the category does not exist or if the
+        user does not have permission to update it. The user can only update categories
+        they own. The user can update the name of the category and its description.
+      operationId: updateCategoryById
+      parameters:
+      - description: The unique identifier of the category.
+        explode: false
+        in: path
+        name: categoryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryUpdateRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+          description: The updated category.
+        "401":
+          content:
+            application/json:
+              example:
+                message: Unauthorized.
+                code: 401
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unauthorized. The user is not authenticated.
+        "403":
+          content:
+            application/json:
+              example:
+                message: Forbidden.
+                code: 403
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Forbidden. The user is authenticated but does not have permission
+            to update the requested resource.
+        "404":
+          content:
+            application/json:
+              example:
+                message: Category not found.
+                code: 404
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Not Found. The category with the specified ID does not exist.
+        "500":
+          content:
+            application/json:
+              example:
+                message: Internal server error.
+                code: 500
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Internal server error. An unexpected error occurred on the
+            server.
+      summary: Update a category by ID
+      tags:
+      - Category
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Category
+  /category/{categoryId}/bills:
+    get:
+      description: Retrieve all bills associated with a specific category by its ID.
+        Only an authenticated user with the necessary permissions can perform this
+        action. The categoryId must correspond to an existing category in the system.
+        The user must be authenticated to access this endpoint. An user cannot access
+        bills for a category they do not own. The microservice conect with the Bills
+        microservice to retrieve the relevant bills for the specified category.
+      parameters:
+      - description: The ID of the category to retrieve bills for.
+        explode: false
+        in: path
+        name: categoryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/_category__categoryId__bills_get_200_response_inner"
+                type: array
+          description: A list of bills associated with the category.
+        "401":
+          content:
+            application/json:
+              example:
+                message: Unauthorized.
+                code: 401
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unauthorized. The user is not authenticated.
+        "403":
+          content:
+            application/json:
+              example:
+                message: Forbidden.
+                code: 403
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Forbidden. The user is authenticated but does not have permission
+            to access the requested resource.
+        "404":
+          content:
+            application/json:
+              example:
+                message: Category not found.
+                code: 404
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Not Found. The category with the specified ID does not exist.
+        "500":
+          content:
+            application/json:
+              example:
+                message: Internal server error.
+                code: 500
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Internal server error. An unexpected error occurred on the
+            server.
+      summary: Get bills for a category by ID.
+      tags:
+      - Category
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: Category
+components:
+  schemas:
+    Category:
+      example:
+        categoryid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        name: name
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        isActive: true
+        isMain: true
+        categoryMainId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        categoryid:
+          description: The unique identifier of the category.
+          format: uuid
+          type: string
+        name:
+          description: The name of the category.
+          type: string
+        createdAt:
+          description: The timestamp when the category was created.
+          format: date-time
+          type: string
+        userId:
+          description: The unique identifier of the user who owns the category. It
+            is required when creating a new category. It is related to the microservice
+            User.
+          format: uuid
+          type: string
+        isActive:
+          description: "Indicates whether the category is active. If false, the category\
+            \ is considered inactive or deleted."
+          type: boolean
+        isMain:
+          description: "Indicates whether the category is a main category. If true,\
+            \ the category is considered a main category. By default, it is set to\
+            \ true."
+          type: boolean
+        categoryMainId:
+          description: The unique identifier of the main category to which this category
+            belongs. it is required if the category is not a main category. It is
+            related to the categoryId in the system.
+          format: uuid
+          type: string
+      type: object
+    CategoryRequest:
+      example:
+        name: name
+        isActive: true
+        description: description
+        categoryMainId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        isMain: true
+      properties:
+        name:
+          description: The name of the category.
+          type: string
+        isActive:
+          description: "Indicates whether the category is active. If false, the category\
+            \ is considered inactive or deleted. By default, it is set to true."
+          type: boolean
+        description:
+          description: The description of the category.
+          type: string
+        categoryMainId:
+          description: The unique identifier of the main category to which this category
+            belongs.
+          format: uuid
+          type: string
+        isMain:
+          description: "Indicates whether the category is a main category. If true,\
+            \ the category is considered a main category. By default, it is set to\
+            \ false."
+          type: boolean
+      required:
+      - description
+      - name
+      type: object
+    CategoryUpdateRequest:
+      example:
+        name: name
+        description: description
+      properties:
+        name:
+          description: The name of the category.
+          type: string
+        description:
+          description: The description of the category.
+          type: string
+      type: object
+    Error:
+      example:
+        code: 400
+        message: Invalid request parameters.
+      properties:
+        code:
+          example: 400
+          format: int32
+          type: integer
+        message:
+          example: Invalid request parameters.
+          type: string
+      type: object
+    _category__categoryId__bills_get_200_response_inner:
+      example:
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        cantidad: 0.8008281904610115
+        descripcion: descripcion
+        fechaCreacion: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          format: uuid
+          type: string
+        cantidad:
+          format: double
+          type: number
+        descripcion:
+          type: string
+        fechaCreacion:
+          format: date-time
+          type: string
+      type: object

@@ -1,0 +1,12 @@
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/OpenApiGeneratorApplication.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/RFC3339DateFormat.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/api/ApiUtil.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/api/CategoryApi.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/api/CategoryApiController.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/configuration/HomeController.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/configuration/SpringDocConfiguration.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/model/Category.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/model/CategoryCategoryIdBillsGet200ResponseInner.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/model/CategoryRequest.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/model/CategoryUpdateRequest.java
+/Users/guadalupemarquezaguilar/Documents/Universidad/ASEE/ControlBills/Category/src/main/java/org/openapitools/model/Error.java
